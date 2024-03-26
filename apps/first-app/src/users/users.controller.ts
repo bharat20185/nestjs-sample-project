@@ -11,10 +11,12 @@ import {
   HttpStatus,
   Param,
   HttpException,
-  Logger
+  Logger,
+  ParseIntPipe
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
+import { TimestampDatePipe } from '@app/common/pipes/timestamp-date.pipe';
 
 @Controller('users')
 export class UsersController {
@@ -31,8 +33,8 @@ export class UsersController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): CreateUserDto {
-    const user = this.usersService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number): CreateUserDto {
+    const user = this.usersService.findOne(id);
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
@@ -41,7 +43,8 @@ export class UsersController {
 
   @Post()
   @UsePipes(new ValidationPipe({ transform: true }))
-  create(@Body() createUserDto: CreateUserDto): CreateUserDto {
+  create(@Body() createUserDto: CreateUserDto, @Body('createdAt', TimestampDatePipe) createdAt: Date): CreateUserDto {
+    console.log("createdAt", typeof createdAt, createdAt)
     return this.usersService.create(createUserDto);
   }
 

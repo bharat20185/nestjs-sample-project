@@ -4,7 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersService {
-    users = new Map<number, User>();
+    users = new Map<number, CreateUserDto>();
 
     findAll(): CreateUserDto[] {
         return Array.from(this.users.values());
