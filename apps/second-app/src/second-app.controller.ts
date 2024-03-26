@@ -1,17 +1,19 @@
 import { Controller, Get, Inject } from '@nestjs/common';
 import { SecondAppService } from './second-app.service';
+import { LoggerService } from './logger.service';
 
 @Controller()
 export class SecondAppController {
   constructor(
     private readonly secondAppService: SecondAppService,
-    @Inject('DATABASE_CONNECTION') private readonly connection: string,
+    private readonly loggerService: LoggerService,
   ) {
-    console.log(this.connection);
   }
 
   @Get()
   getHello(): string {
+    this.loggerService.log('Hello World!');
+    this.loggerService.error('Error message', 'stack trace');
     return this.secondAppService.getHello();
   }
 }

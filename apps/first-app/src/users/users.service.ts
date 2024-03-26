@@ -10,9 +10,8 @@ export class UsersService {
         return Array.from(this.users.values());
     }
 
-    findOne(id): CreateUserDto {
-        console.log('id', id);
-        return this.users.get(+id);
+    findOne(id: number): CreateUserDto {
+        return this.users.get(id);
     }
 
     create(user: CreateUserDto): CreateUserDto {

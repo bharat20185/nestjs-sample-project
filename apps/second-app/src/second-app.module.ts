@@ -1,7 +1,9 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestMiddleware, NestModule } from '@nestjs/common';
 import { SecondAppController } from './second-app.controller';
 import { SecondAppService } from './second-app.service';
 import { CatsModule } from './cats/cats.module';
+import { LoggerService } from './logger.service';
+import { LoggerMiddleware } from './logger.middleware';
 
 const ENV_NAME = 'dev';
 
@@ -10,14 +12,11 @@ const ENV_NAME = 'dev';
   controllers: [SecondAppController],
   providers: [
     SecondAppService,
-    {provide: 'APP_NAME', useValue: 'Second App'},
-    {
-      provide: 'DATABASE_CONNECTION',
-      useFactory: async (appName: string) => {
-        return 'connection to database...' + appName;
-      },
-      inject: [{token: 'APP_NAME', optional: true}],
-    }
+    LoggerService
   ],
 })
-export class SecondAppModule {}
+export class SecondAppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}
